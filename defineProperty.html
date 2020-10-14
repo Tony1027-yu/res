@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>interview</title>
+</head>
+
+<body>
+    <script>
+        // 前端开发所处的各种环境
+        // 开发环境(DEV)：开发环境是专门用于开发的服务器，配置可以比较随意， 为了开发调试方便，一般打开全部错误报告。
+        // 生产环境(PROD)：是指正式提供对外服务的，一般会关掉错误报告，打开错误日志。可以理解为包含所有的功能的环境，任何项目所使用的环境都以这个为基础，然后根据客户的个性化需求来做调整或者修改。
+        // 测试环境(UAT)：一般是克隆一份生产环境的配置，一个程序在测试环境工作不正常，那么肯定不能把它发布到生产机上。
+        // 三个环境也可以说是系统开发的三个阶段：开发->测试->上线，其中生产环境也就是通常说的真实环境。
+        // UAT环境：UAT，(User Acceptance Test),用户接受度测试 即验收测试，所以UAT环境主要是用来作为客户体验的环境。
+        // 仿真环境：顾名思义是和真正使用的环境一样的环境（即已经出售给客户的系统所在环境，也成为商用环境），所有的配置，页面展示等都应该和商家正在使用的一样，差别只在环境的性能方面。
+
+ 
+
+        // Object.defineProperty的使用；
+        // Object.defineProperty()的作用就是直接在一个对象上定义一个新属性，或者是修改一个已经存在的属性。
+        // Onject.defineProperty(Obj,prop,desc);
+        // obj ==> 需要定义属性的当前对象；
+        // prop ==> 当前需要定义的属性名；
+        // desc ==> 属性描述符（可以是一个对象）；
+        // 通过Object.defineProperty()为对象定义属性，有两种形式，并且不能混合使用，分别为数据描述符，存取描述符。
+        // 存取描述符：是有一对getter、setter函数功能来描述的属性。
+        let Person = {};
+        Object.defineProperty(Person, 'name', {
+            value: 'jack',
+            writable: true
+        });
+        console.log(Person.name);
+
+        // call 与啊 apply的使用&区别；（它们的作用都是一摸一样的，只是传参的形式有区别而已。）
+        // apply 方法传入两个参数，一个是作为函数上下文的对象，另一个是作为函数参数所组成的数组。
+        // call 第一个参数也是作为函数上下文的对象，但是后面传入的是一个参数列表，而不是一个单个的数组。
+        // 改变this指向；
+        // call方法的第一个参数是作为函数上下文的对象，这里把obj作为参数传给了func，此时函数里的this便指向了obj对象。
+        // 调用函数；
+        // apply、call方法都会使函数立即执行，因此他们也可以用来调用函数。
+        // ES5中扩展了bind的方法，但是在低版本的IE中不兼容。它和call很相似，接受的参数有两部分，第一个参数是作为函数上下文的对象，第二部分参数是个列表，可以接受多个参数，但是bind返回值是函数，原函数func中的this并没有被改变，我们需要再次调用bind之前的函数对象。
+        var obj = {
+            name: 'Tony'
+        }
+
+        function funcApply(firstName, lastName) {
+            console.log(firstName + '' + this.name + '' + lastName);
+        }
+        funcApply.apply(obj, ['A', 'B']) // ATonyB
+
+        function funcCall(firstName, lastName) {
+            console.log(firstName + '' + this.name + '' + lastName);
+        }
+        funcCall.call(obj, 'A', 'B') // ATonyB
+
+        // 辨别this指向；
+        var Person1 = function () {
+            this.name = 'Tony';
+            console.warn(this);
+        };
+        var Person2 = function () {
+
+            this.getName = function () {
+                console.warn(this);
+                console.log(this.name);
+            }
+            Person1.call(this);
+        };
+        var person = new Person2();
+        person.getName();
+
+        // module.exports与exports,export与export default之间的关系的区别：
+        // CommonJS模块规范和ES6模块规范完全是两种不同的概念。
+        // CommonJS规范规定，每一个模块内部，module变量代表当前模块。这个变量是一个对象，它的exports属性（即module.exports）是对外的接口。加载某个模块，其实就是加载该模块的module.exports属性。
+        ```javascript
+        var x = 5;
+        var addX = function (value) {
+        return value + x;
+        };
+        module.exports.x = x;
+        module.exports.addX = addX;
+
+        ```
+
+        ```- 上面代码通过module.exports输出变量x和函数addX。
+
+        - require方法用于加载模块。```
+
+        ```javascript
+        var example = require('./example.js');
+
+        console.log(example.x); // 5
+        console.log(example.addX(1)); // 6
+        ```
+        // exports与module.exports：
+        // 为了方便，Node为每个模块提供了一个exports变量，指向module.exports。这等同在每个模块头部，有一行这样的命令。
+        ```javascript
+            var exports = module.exports;
+        ```
+        // 于是我们可以直接在exports对象上添加方法，表示对外输出的接口，如同在module.exports上添加一样。注意的是不能直接将exports变量指向一个值，因为这样等同于切断了exports与module.exports的联系。
+
+        // ES6模块规范;
+        // 不同于CommonJS,ES6使用export和import来导出、导入模块。
+
+        ```jsvascript
+        var firstName = 'Michael';
+        var lastName = 'Jackson';
+        var year = 1958;
+        ```
+        export {firstName,lastName,year};   // 需要特别注意的是，export命令规定的是对外的接口，必须与模块内部的变量建立一一对应关系。
+
+        ```javascript
+        // 写法一
+        export var m = 1;
+
+        // 写法二
+        var m = 1;
+        export {m};
+
+        // 写法三
+        var n = 1;
+        export {n as m};
+        ```
+
+        // export default 命令；
+        // 使用export default命令，为模块指定默认输出。
+        ``` javascript
+        // export default.js
+        ```
+        export default function() {
+            console.log('foo');
+        }
+
+        // 数组的reduce简单用法：数组的求和，求乘积。
+        // 数组的reduce高级用法：
+        // （1）计算数组中每个元素出现的次数；
+        // （2）数组去重；
+        // （3）将二维数组转化为一维；
+        // （4）对象里的属性求和
+
+        // setTimeout 与 setInterval都是异步的，js是单线程的，所有的操作都在这个主线程上操作。
+
+        // 关于原型链：
+    // prototype和_proto_
+    // 1. prototype是函数（function）的一个属性，它指向函数的原型。
+    // 2. _proto_是对象的内部属性，它指向的构造器的原型，对象依赖它进行原型链查询。
+    // 构造函数的prototype属性，包含一个对象，所有实例对象需要共享的属性和方法，都放在这个对象里面；那些不需要共享的属性和方法，就放在构造函数里面。
+    </script>
+</body>
+
+</html>
